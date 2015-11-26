@@ -11,9 +11,10 @@ usage()
     echo "Options:"
     echo "  -h, --help"
     echo "      --version"
-    echo "  -a, --long-a ARG"
-    echo "  -b, --long-b [ARG]"
-    echo "  -c, --long-c"
+    echo "  -y, -f, --force-y"    
+    echo "  -c, --connection ARG"
+    echo "  -t, --dl-time ARG"
+    echo "  -s, --sleep-time ARG"    
     echo
     exit 1
 }
@@ -30,7 +31,7 @@ do
             echo $VERSION
             exit 1
             ;;
-        '-a'|'--long-a' )
+        '-y'|'--force-y' | '-f' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 echo "$PROGNAME: option requires an argument -- $1" 1>&2
                 exit 1
@@ -40,7 +41,7 @@ do
 	    param="something"
             shift 2
             ;;
-        '-b'|'--long-b' )
+        '-t'|'--dl-time' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 shift
             else
@@ -48,11 +49,28 @@ do
 		echo "arg_b: " ${ARG_B}
 		param="something"
                 shift 2
-            fi
+            fi	    
             ;;
-        '-c'|'--long-c' )
-            shift 1
+        '-c' |'--connection' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                shift
+            else
+		CNCT="$2"
+		echo "CNCT: " ${CNCT}
+		param="something"
+                shift 2
+            fi	    
             ;;
+        '-s'|'--sleep-time' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                shift
+            else
+		ARG_B="$2"
+		echo "arg_b: " ${ARG_B}
+		param="something"
+                shift 2
+            fi	    
+	    ;;
         '--'|'-' )
             shift 1
             param+=( "$@" )
