@@ -101,9 +101,8 @@ function if_cmd_exec()
 
     local key=${$}     
     local line_num="8"
-
     
-    echo "Confirming if command was exectued...." 
+    echo "Confirming if command was exectued correctly ..." 
     echo ""
 
     ct=1
@@ -118,23 +117,23 @@ function if_cmd_exec()
 
     if [ ${MSG} = ${KEY} ]; then
 	echo ""
-	echo "OK. confirmed start of the measurment."
+	echo "OK. measurement started"
 	echo "OK. Port     :" ${port}
 	echo "OK. Device ID:" ${dev_id}
 	return 0    
     else
 	echo ""
-	echo "ERROR: NOT confirmed the measurment start."
+	echo "ERROR: NOT started "
 	echo "Port     :" ${port}
 	echo "Device ID:" ${dev_id}
 	echo ""
-	echo "CHECK 'Device ID' 'Power ON/OFF' 'Connection' 'SensorServer.exe'"
+	echo "CHECK 'Device ID' 'Power ON/OFF' 'Connection'  and 'SensorServer.exe'"
 #	echo "then Re-run the program!"
 	echo ""
 	return 1
     fi
 
-    echo "OK... if_cmd_exec()"
+    echo "OK... success if_cmd_exec()"
     return 0    
 }
 
