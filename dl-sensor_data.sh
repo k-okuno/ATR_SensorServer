@@ -25,13 +25,13 @@ EXP_DIR="./${DATE}_DEV${DEVID}"
 # USB w/o tee : 2 min per connection.
 # USB w/  tee : 3 min per connection.
 # TB w/, w/o tee : 7-15 min (900sec) per 1-4 connection.
-DLTIME="180" # for USB
-#DLTIME="600" # for BT
+#DLTIME="180" # for USB
+DLTIME="120" # for BT
 
 # Set connection means
 # CNCT=USB or CNCT=BT
-CNCT="USB"
-#CNCT="BT"
+#CNCT="USB"
+CNCT="BT"
 # COM: BT -> 1, USB -> 2
 COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi
 
@@ -40,6 +40,7 @@ PORT=${COM}${DEVID}
 
 # Data entry # to DL.
 WHICHDATA="1"
+#WHICHDATA="2"
 
 # File name
 FILENAME=${PORT}-${NOW}-${WHICHDATA}.csv
