@@ -65,6 +65,23 @@ check_func_rtv()
 source ./func_cnct_check.sh
 source ./func_save_data-log.sh
 
+
+
+
+#############
+# Useage:
+# > ./if_configured <hostname> <port>
+#############
+function if_configured()
+{
+    echo "Checking configuration... "
+ 
+    # apply and modify the 'func_check_cnct'?
+
+    return 0
+}
+
+
 #############
 # Useage:
 # > ./configure_sensor <host name> <port>
@@ -149,6 +166,9 @@ check_func_rtv
 
 echo "OK. ready for the next step...(It takes 8 sec)"
 configure_sensor ${HOST} ${PORT}  | col -b 2>&1 | tee -a ${LOGNAME}
+
+# if_configured ${HOST} ${PORT} | col -b 2>&1 | tee -a ${LOGNAME}
+
 echo "OK! compeleted setup using" ${CNCT}  2>&1 | tee -a ${LOGNAME}
 echo "Device ID:" ${DEVID}                 2>&1 | tee -a ${LOGNAME} 
 echo ""
