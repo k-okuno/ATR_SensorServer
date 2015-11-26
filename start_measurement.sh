@@ -152,7 +152,7 @@ function start_sensor()
     echo "            = <USB=20000>,<BT=10000> + <DEV ID>"
     echo "Log         : " ${LOGNAME}
     echo ""
-    echo "Sending 'getbattstatus', 'clearmem',then 'start' command."
+    echo "Sending 'getbattstatus', 'clearmem', 'getmemfreesize',then 'start' command."
     ( echo open ${HOST} ${PORT}
       sleep 3
       echo getbattstatus

@@ -20,7 +20,7 @@ SCRIPT_NAME=${0}
 ALL_ARGS=$@
 
 #DURATION="0.5"
-DURATION="1"
+DURATION="1.0"
 
 DEVID=${1}
 
@@ -73,7 +73,14 @@ function configure_sensor()
 {
     SETD_ARG=`date +%y%m%d%H%M%S000`
 
-    SET_AGS="setags 1 0 1"
+    ########    ########
+    # 設定の説明が必要
+    #
+    # 
+    ########    ########
+#    SET_AGS="setags 1 0 1"
+#    SET_AGS="setags 10 0 1"
+    SET_AGS="setags 1 0 10"    
     SET_GEO="setgeo 0 0 0"
     SET_PRES="setpres 0 0 0"
     SET_BATT="setbatt 0 0"
@@ -112,13 +119,19 @@ function configure_sensor()
       sleep ${DURATION}
       echo ${SET_BATT}
       sleep ${DURATION}
+      echo getd
+      sleep ${DURATION}
+      echo getags
+      sleep ${DURATION}
+      echo getgeo
+      sleep ${DURATION}
+      echo getpres
+      sleep ${DURATION}      
       echo memcount
       sleep ${DURATION}
       echo getmemfreesize
       sleep ${DURATION}
       echo getbattstatus
-      sleep ${DURATION}
-      echo getd
       sleep ${DURATION}
       echo devinfo
       sleep ${DURATION}
