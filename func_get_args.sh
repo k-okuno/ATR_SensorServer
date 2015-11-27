@@ -1,7 +1,5 @@
-#!/bin/bash
-
-PROGNAME=$(basename $0)
-VERSION="1.0"
+# this is the function: get arg
+# it is more like a template.
 
 usage()
 {
@@ -11,10 +9,9 @@ usage()
     echo "Options:"
     echo "  -h, --help"
     echo "      --version"
-    echo "  -y, -f, --force-y"    
-    echo "  -c, --connection ARG"
-    echo "  -t, --dl-time ARG"
-    echo "  -s, --sleep-time ARG"    
+    echo "  -a, --long-a ARG"
+    echo "  -b, --long-b [ARG]"
+    echo "  -c, --long-c"
     echo
     exit 1
 }
@@ -31,7 +28,7 @@ do
             echo $VERSION
             exit 1
             ;;
-        '-y'|'--force-y' | '-f' )
+        '-a'|'--long-a' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 echo "$PROGNAME: option requires an argument -- $1" 1>&2
                 exit 1
@@ -41,7 +38,7 @@ do
 	    param="something"
             shift 2
             ;;
-        '-t'|'--dl-time' )
+        '-b'|'--long-b' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 shift
             else
@@ -49,28 +46,11 @@ do
 		echo "arg_b: " ${ARG_B}
 		param="something"
                 shift 2
-            fi	    
+            fi
             ;;
-        '-c' |'--connection' )
-            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                shift
-            else
-		CNCT="$2"
-		echo "CNCT: " ${CNCT}
-		param="something"
-                shift 2
-            fi	    
+        '-c'|'--long-c' )
+            shift 1
             ;;
-        '-s'|'--sleep-time' )
-            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                shift
-            else
-		ARG_B="$2"
-		echo "arg_b: " ${ARG_B}
-		param="something"
-                shift 2
-            fi	    
-	    ;;
         '--'|'-' )
             shift 1
             param+=( "$@" )
@@ -97,3 +77,4 @@ if [ -z $param ]; then
     echo "Try '$PROGNAME --help' for more information." 1>&2
     exit 1
 fi
+

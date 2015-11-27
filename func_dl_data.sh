@@ -28,6 +28,10 @@ function dl_data()
     echo "Download data: (start in 7 sec)"  2>&1 | tee -a ${logfile_name}
     echo "" 2>&1 | tee -a ${logfile_name}
 
+    #################
+    # expect should be used ... -> rewrite.
+    #################
+
     ( echo open ${hostname} ${port}
       sleep 3
       echo devinfo

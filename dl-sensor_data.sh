@@ -30,8 +30,9 @@ DLTIME="120" # for BT
 
 # Set connection means
 # CNCT=USB or CNCT=BT
-#CNCT="USB"
-CNCT="BT"
+CNCT="USB"
+#CNCT="BT"
+
 # COM: BT -> 1, USB -> 2
 COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi
 
