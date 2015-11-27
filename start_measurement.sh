@@ -11,9 +11,7 @@ ALL_ARGS=$@
 
 DURATION="0.5"
 
-# specific <key word> for checking a log
-KEY="sens start"
-
+# DEVID as the arg.
 DEVID=${1}
 
 # Directory/Folder to save data and log.
@@ -83,58 +81,47 @@ source ./func_save_data-log.sh
 
 #############
 # Useage:
-# > ./if_cmd_exec <hostname> <port> <log file> <key word>
+# > ./if_started <host> <port>
 #############
-function if_cmd_exec()
+function if_started()
 {
-    ##########################################
-    # TMP #
-    echo "function will be ready soon..."
-    exit 1
-    ##########################################
-
-    
     local host=${1}
     local port=${2}
-    local logfile=${3}
     local dev_id=$(( ${port} % 10000))
+    local tmpfile="tmpfile.txt"
+    local status=-1
 
-    local key=${$}     
-    local line_num="8"
+    echo "Confirming if measurment stared ..."
+    ( echo open ${host} ${port}
+      sleep 3; echo "status"
+      sleep 1
+    ) | telnet | col -b 2>&1 | tee ${tmpfile}
     
-    echo "Confirming if command was exectued correctly ..." 
-    echo ""
-
-    ct=1
-    MSG=-1    
-    while read line; do
-	if [ ${ct} -eq ${line_num} ]; then
-	    MSG=${line}
-	    break
-	fi
-	ct=$((ct + 1))
-    done < ${logfile}
-
-    if [ ${MSG} = ${KEY} ]; then
-	echo ""
-	echo "OK. measurement started"
-	echo "OK. Port     :" ${port}
-	echo "OK. Device ID:" ${dev_id}
-	return 0    
-    else
-	echo ""
-	echo "ERROR: NOT started "
-	echo "Port     :" ${port}
-	echo "Device ID:" ${dev_id}
-	echo ""
-	echo "CHECK 'Device ID' 'Power ON/OFF' 'Connection'  and 'SensorServer.exe'"
-#	echo "then Re-run the program!"
-	echo ""
+    if [ ! -f ${tmpfile} ] ; then
+	echo "ERROR: " ${tmpfile} "does not exist." 
 	return 1
+    else
+	local ct=1
+	while read line; do
+	    if [ ${ct} -eq 4 ]; then
+		status=${line}
+		break
+	    fi
+	    ct=$((ct + 1))
+	done < ${tmpfile}
     fi
 
-    echo "OK... success if_cmd_exec()"
-    return 0    
+    if [ ${status} -eq 3 ]; then
+	echo "OK. confimred starting measurement."
+	echo "OK. Device ID:" ${dev_id}
+	return 0
+    else
+	echo "ERROR: measurement NOT started."
+	echo "Device ID:" ${dev_id}
+	echo "CHECK 'Device ID' 'Power ON/OFF' 'Connection'  and 'SensorServer.exe'"
+	rm ${tmpfile}
+	return 1
+    fi
 }
 
 #############
@@ -151,9 +138,12 @@ function start_sensor()
     echo "            = <USB=20000>,<BT=10000> + <DEV ID>"
     echo "Log         : " ${LOGNAME}
     echo ""
-    echo "Sending 'getbattstatus', 'clearmem', 'getmemfreesize',then 'start' command."
+    echo "Sending 'getags', 'getbattstatus', 'clearmem', 'getmemfreesize'"
+    echo "then 'start' command."
     ( echo open ${HOST} ${PORT}
       sleep 3
+      echo getags
+      sleep ${DURATION}
       echo getbattstatus
       sleep ${DURATION}
       echo clearmem
@@ -171,39 +161,31 @@ function start_sensor()
 ###################
 check_args ${@} 2>&1 | tee -a ${LOGNAME}
 check_func_rtv
+#check_cnct ${HOST} ${PORT} 2>&1 | tee -a ${LOGNAME}
+#check_func_rtv
 
-# no need of this?
-check_cnct ${HOST} ${PORT} 2>&1 | tee -a ${LOGNAME}
-check_func_rtv
-
-echo "OK. ready to start measuring..."
-echo ""
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 echo "!!! WARNNING !!!    !!! WARNNING !!!"
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+echo 
 echo "Memory will be cleared completly!"
-echo ""
-
-echo "OK? (yes/no). (start in a few seconds)"
-
+echo "OK ? "
+###############################################
 # Type "yes" to start measuring.
 # All data will be cleared prior to the measurement
+###############################################
 yes_or_no_while 2>&1 | tee -a ${LOGNAME}
 
 if [ ${PIPESTATUS[0]} -eq 0 ] ; then
-    #NOT_STARTED="TRUE"
     while true; do
-	start_sensor ${HOST} ${PORT}         | col -b 2>&1 | tee -a ${LOGNAME}    
-	
-	if_cmd_exec ${HOST} ${PORT} ${LOGNAME} ${KEY} 2>&1 | tee -a ${LOGNAME}
-	check_func_rtv    
+	start_sensor ${HOST} ${PORT}    | col -b 2>&1 | tee -a ${LOGNAME}    
+	if_started ${HOST} ${PORT}               2>&1 | tee -a ${LOGNAME}
 	if [ ${PIPESTATUS[0]} -eq 0 ] ; then
-	    echo "OK! started thr "${CNCT}            2>&1 | tee -a ${LOGNAME}
-	    echo "Device ID: " ${DEVID}               2>&1 | tee -a ${LOGNAME}
-	    return 0 #this will get out of the loop?
+	    echo "OK! started thr "${CNCT}       2>&1 | tee -a ${LOGNAME}
+	    break 
 	else
-	    echo "NOT started!"                       2>&1 | tee -a ${LOGNAME}
-	    echo "Re-trying...."                      2>&1 | tee -a ${LOGNAME}
+	    echo "NOT started!"                  2>&1 | tee -a ${LOGNAME}
+	    echo "Re-trying ...(in 3 sec)"                 2>&1 | tee -a ${LOGNAME}
 	    sleep 3
 	fi
     done
