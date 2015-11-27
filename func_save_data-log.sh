@@ -29,7 +29,6 @@ function save_files()
 {
     local dir=$1
 
-    echo "Dir/Folder to save files : ${dir}"
     shift
     while [ -n "$1" ]
     do
