@@ -7,7 +7,11 @@ DATE 	= `date '+%Y%m%d-%H%M'`
 BACKUP_DIR    = backups
 
 
-TARGET_FILES = check_connection.sh default.conf dl-sensor_data.sh func_cnct_check.sh func_dl_data.sh func_save_data-log.sh setup_sensor.sh start_measurement.sh stop_measurement.sh test_dl_data.sh test_func_cnct_check.sh test_func_dl_data.sh test_func_save_data-log.sh
+TARGET_FILES =  check_connection.sh default.conf dl-sensor_data.sh \
+		func_cnct_check.sh func_dl_data.sh func_save_data-log.sh \
+		setup_sensor.sh start_measurement.sh stop_measurement.sh \
+		test_func_dl_data.sh test_func_cnct_check.sh test_func_dl_data.sh \
+		test_func_save_data-log.sh
 
 # backup:
 # 	if [ ! -d $(BACKUP_DIR) ] ;\
