@@ -70,8 +70,8 @@ function check_cnct()
     fi
 
     echo "" 
-    echo "Expecting Connection          : " ${CNCT}   
-    echo "Status (USB接続 =0, BT接続 =2): " ${STATUS} 
+    echo "Expecting Connection                  : " ${CNCT}   
+    echo "Status (USB接続=0, BT接続=2, 計測中=3): " ${STATUS} 
 
 
     if [ ${STATUS} -eq 0 ] && [ ${CNCT} = "USB" ]; then
@@ -100,7 +100,6 @@ function check_cnct()
     read INPUT
     echo "OK. start in a moment."
     echo ""
-    #    if [ $INPUT -eq ]; then
     rm ${TMPFILE}
     return 0
 }
