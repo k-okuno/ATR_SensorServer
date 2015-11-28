@@ -185,7 +185,7 @@ if [ ${PIPESTATUS[0]} -eq 0 ] ; then
 	    break 
 	else
 	    echo "NOT started!"                  2>&1 | tee -a ${LOGNAME}
-	    echo "Re-trying ...(in 3 sec)"                 2>&1 | tee -a ${LOGNAME}
+	    echo "Re-trying ...(in 3 sec)"       2>&1 | tee -a ${LOGNAME}
 	    sleep 3
 	fi
     done
