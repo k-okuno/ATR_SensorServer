@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DATE=`date +%Y%m%d`
 TIME=`date +%H%M_%S`
@@ -15,7 +15,7 @@ DURATION="0.5"
 DEVID=${1}
 
 # Directory/Folder to save data and log.
-# 本当は、configファイルに抜き出して、共通化すべき設定。
+# this should be shared with other fucntion with an external config file.
 EXP_DIR="./${DATE}_DEV${DEVID}"
 
 # Set connection means
