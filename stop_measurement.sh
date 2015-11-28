@@ -14,7 +14,7 @@ DURATION="0.5"
 DEVID=${1}
 
 # Directory/Folder to save data and log.
-# 本当は、configファイルに抜き出して、共通化すべき設定。
+# this should be shared with other related function in separate text.
 EXP_DIR="./${DATE}_DEV${DEVID}"
 
 # Set connection means
@@ -51,6 +51,55 @@ check_func_rtv()
 source ./func_cnct_check.sh
 source ./func_save_data-log.sh
 
+
+#############
+# Useage:
+# > ./if_stoped <host> <port>
+#############
+function if_stoped()
+{
+    local host=${1}
+    local port=${2}
+    local dev_id=$(( ${port} % 10000))
+    local tmpfile="tmpfile.txt"
+    local status=-1
+    local bt_no_measurement=2
+
+    echo "Confirming if measurment stopped ..."
+    ( echo open ${host} ${port}
+      sleep 3; echo "status"
+      sleep 1
+    ) | telnet | col -b 2>&1 | tee ${tmpfile}
+    
+    if [ ! -f ${tmpfile} ] ; then
+	echo "ERROR: " ${tmpfile} "does not exist." 
+	return 1
+    else
+	local ct=1
+	while read line; do
+	    if [ ${ct} -eq 4 ]; then
+		status=${line}
+		break
+	    fi
+	    ct=$((ct + 1))
+	done < ${tmpfile}
+    fi
+
+    if [ ${status} -eq ${bt_no_measurement} ]; then
+	echo "OK. confimred stopped measurement."
+	echo "OK. Device ID:" ${dev_id}
+	rm ${tmpfile}	
+	return 0
+    else
+	echo "ERROR: measurement NOT stopped."
+	echo "Device ID:" ${dev_id}
+	echo "CHECK 'Device ID' 'Power ON/OFF' 'Connection'  and 'SensorServer.exe'"
+	rm ${tmpfile}
+	return 1
+    fi
+}
+
+
 #############
 # Useage:
 # > ./start_sensor <host name> <port>
@@ -83,14 +132,23 @@ function stop_sensor()
 ###################
 check_args ${@} 2>&1 | tee -a ${LOGNAME}
 check_func_rtv
-# check_cnct ${HOST} ${PORT} 2>&1 | tee -a ${LOGNAME}
-# check_func_rtv
 
-echo "OK. stop measuring..."
-stop_sensor ${HOST} ${PORT} | col -b 2>&1 | tee -a ${LOGNAME}
-# 本当に計測が開始されたかのチェック,check_cnt.shと同じテク+loopで？
-echo "OK! stoped thr "${CNCT} 2>&1 | tee -a ${LOGNAME}
-echo "Device ID: " ${DEVID}   2>&1 | tee -a ${LOGNAME}
+echo "OK. stopping measuring ..."
+
+while true; do
+    stop_sensor ${HOST} ${PORT}    | col -b 2>&1 | tee -a ${LOGNAME}
+    if_stopped  ${HOST} ${PORT}             2>&1 | tee -a ${LOGNAME}
+    if [ ${PIPESTATUS[0]} -eq 0 ] ; then
+	echo "OK! stopped thr "${CNCT}      2>&1 | tee -a ${LOGNAME}
+	echo "Device ID: " ${DEVID}         2>&1 | tee -a ${LOGNAME}	
+	break 
+    else
+	echo "NOT stopped!"                 2>&1 | tee -a ${LOGNAME}
+	echo "Re-trying ...(in 3 sec)"      2>&1 | tee -a ${LOGNAME}
+	sleep 3
+    fi
+done 
+
 
 echo "Saving stop log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
