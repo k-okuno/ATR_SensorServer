@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DATE=`date +%Y%m%d`
 TIME=`date +%H%M_%S`

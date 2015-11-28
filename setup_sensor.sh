@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ################################
 # setup the sensors
 # setags 1 0 1 <1ms>, <no to display>, <write to memory>
