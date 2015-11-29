@@ -3,18 +3,51 @@
 PROGNAME=$(basename $0)
 VERSION="1.0"
 
+PARM_MSG="OK"
+
+
+#############################
+# Function to check if arg is numeric.
+# Usage:
+# > ./if_num <an arg> 
+#############################
+function if_num()
+{
+    expr "${1}" + 1 >/dev/null 2>&1
+    if [ $? -lt 2 ]
+    then
+	#echo "Numeric"
+	return 0
+    else
+	#echo "not Numeric"	
+	return 1	
+    fi
+}
+
+#if_num $1 || echo "not NUM"
+# if [ $? -ne 0 ]; then
+#     echo "rtv 1"
+#     exit 1
+# else
+#     echo "rtv 0" 
+#     exit 0
+# fi
+
+
+
 usage()
 {
     echo "Usage: $PROGNAME [OPTIONS] FILE"
-    echo "  This script is ~."
+#    echo "  This script is ~."
     echo
     echo "Options:"
     echo "  -h, --help"
     echo "      --version"
-    echo "  -y, -f, --force-y"    
-    echo "  -c, --connection ARG"
-    echo "  -t, --dl-time ARG"
-    echo "  -s, --sleep-time ARG"    
+    echo "  --debug"        
+    echo "  -y, --force-y"    
+    echo "  -c, --connection [bt/usb]"
+    echo "  -s, --sleep-time [sec]"    
+    echo "  -t, --dl-time [sec]"
     echo
     exit 1
 }
@@ -31,46 +64,66 @@ do
             echo $VERSION
             exit 1
             ;;
-        '-y'|'--force-y' | '-f' )
+        '-y'|'--all-y' )
+	    ALL_Y="TRUE"
+	    echo "ALL_Y: " ${ALL_Y}
+	    param="something"		
+	    shift 
+            ;;
+        '--debug' )
+	    DEBUG="TRUE"
+	    echo "DEBUG: " ${DEBUG}
+	    param="${PARM_MSG}"		
+	    shift 1
+            ;;	
+        '-c' |'--connection' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                echo "$PROGNAME: option requires an argument -- $1" 1>&2
-                exit 1
-            fi
-            ARG_A="$2"
-	    echo "arg_a" ${ARG_A}
-	    param="something"
-            shift 2
+                echo "$PROGNAME: option requires an argument -- $1 [bt/usb]" 1>&2
+                exit 1		
+	    elif [[ "$2" = "bt" ]] || [[ "$2" = "usb" ]]; then
+		CNCT="$2"
+		echo "CNCT: " ${CNCT}
+		param="${PARM_MSG}"
+                shift 2		
+	    else		
+		echo "$PROGNAME: option requires an argument -- $1 [bt/usb]" 1>&2
+                exit 1		
+            fi	    		
             ;;
         '-t'|'--dl-time' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                shift
-            else
-		ARG_B="$2"
-		echo "arg_b: " ${ARG_B}
-		param="something"
-                shift 2
-            fi	    
-            ;;
-        '-c' |'--connection' )
-            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                shift
-            else
-		CNCT="$2"
-		echo "CNCT: " ${CNCT}
-		param="something"
-                shift 2
-            fi	    
-            ;;
+                echo "$PROGNAME: option requires an argument -- $1 [sec]" 1>&2
+                exit 1		
+	    else
+		if_num ${2} 
+		if [ $? -ne 0 ]; then
+		    echo "Not Numeric: $1 [ARG = sec]" 1>&2
+		    exit 1
+		else
+		    DLTIME=${2}
+		    echo "DLTIME: " ${DLTIME}
+		    param="${PARM_MSG}"
+                    shift 2		    
+		fi
+            fi  
+            ;;	
         '-s'|'--sleep-time' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                shift
-            else
-		ARG_B="$2"
-		echo "arg_b: " ${ARG_B}
-		param="something"
-                shift 2
-            fi	    
-	    ;;
+                echo "$PROGNAME: option requires an argument -- $1 [sec]" 1>&2
+                exit 1		
+	    else
+		if_num ${2} 
+		if [ $? -ne 0 ]; then
+		    echo "Not Numeric: $1 [ARG = sec]" 1>&2
+		    exit 1
+		else
+		    DURATION=${2}
+		    echo "SLEEP_T: " ${DURATION}
+		    param="${PARM_MSG}"
+                    shift 2		    
+		fi
+            fi  
+            ;;	
         '--'|'-' )
             shift 1
             param+=( "$@" )
