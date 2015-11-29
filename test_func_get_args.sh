@@ -6,30 +6,17 @@ VERSION="1.0"
 PARM_MSG="OK"
 
 
-#############################
-# Function to check if arg is numeric.
-# Usage:
-# > ./if_num <an arg>
-# Return:
-# 0 : when <an arg> is Numeric
-# 1 : when <an arg> is NOT Numeric
-#############################
-function if_num()
-{
-    expr "${1}" + 1 >/dev/null 2>&1
-    if [ $? -lt 2 ]
-    then
-	#echo "Numeric"
-	return 0
-    else
-	#echo "not Numeric"	
-	return 1	
-    fi
-}
+#################################
+# load functions from lib
+#################################
+source ./func_if_num.sh
 
 
 
-usage()
+#################################
+# function to display usage.
+#################################
+function usage()
 {
     echo "Usage: $PROGNAME [OPTIONS] FILE"
 #    echo "  This script is ~."
@@ -47,6 +34,14 @@ usage()
 }
 
 
+
+#################################
+# this part is a template.
+# Usage:
+# > ./get_args $@
+#################################
+function get_args()
+{
 for OPT in "$@"
 do
     case "$OPT" in
@@ -144,3 +139,11 @@ if [ -z $param ]; then
     echo "Try '$PROGNAME --help' for more information." 1>&2
     exit 1
 fi
+}
+
+
+##################################
+# main
+##################################
+get_args $@
+
