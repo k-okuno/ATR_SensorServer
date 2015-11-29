@@ -9,7 +9,10 @@ PARM_MSG="OK"
 #############################
 # Function to check if arg is numeric.
 # Usage:
-# > ./if_num <an arg> 
+# > ./if_num <an arg>
+# Return:
+# 0 : when <an arg> is Numeric
+# 1 : when <an arg> is NOT Numeric
 #############################
 function if_num()
 {
@@ -23,15 +26,6 @@ function if_num()
 	return 1	
     fi
 }
-
-#if_num $1 || echo "not NUM"
-# if [ $? -ne 0 ]; then
-#     echo "rtv 1"
-#     exit 1
-# else
-#     echo "rtv 0" 
-#     exit 0
-# fi
 
 
 
