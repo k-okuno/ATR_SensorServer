@@ -6,6 +6,7 @@
 # Return:
 # 0 : when <an arg> is Numeric
 # 1 : when <an arg> is NOT Numeric
+# 改行コードが勝手にCRLFに変換されるかのテスト。LFで統一し、勝手に変更してほしくない
 #############################
 function if_num()
 {
