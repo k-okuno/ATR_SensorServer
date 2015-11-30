@@ -54,9 +54,9 @@ source ./func_save_data-log.sh
 
 #############
 # Useage:
-# > ./if_stoped <host> <port>
+# > ./if_stopped <host> <port>
 #############
-function if_stoped()
+function if_stopped()
 {
     local host=${1}
     local port=${2}
