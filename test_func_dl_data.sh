@@ -31,7 +31,7 @@ PORT=${COM}${DEVID}
 
 
 # only for local use
-FILENAME=${PORT}-${NOW}-${WHICHDATA}.txt
+FILENAME=${PORT}-${NOW}-${WHICHDATA}.csv
 LOGNAME=${PORT}-${NOW}-${WHICHDATA}.log
 
 #############
@@ -67,8 +67,8 @@ echo "start $0"
 # check_cnct ${HOST} ${PORT} | tee -a ${LOGNAME}
 # check_func_rtv
 
-#dl_data ${HOST} ${PORT} | col -b 2>&1 | tee -a ${FILENAME}
-dl_data ${HOST} ${PORT} ${FILENAME} ${LOGNAME}
+#dl_data ${HOST} ${PORT} ${FILENAME} ${LOGNAME}
+dl_data-expect ${HOST} ${PORT} ${FILENAME} ${LOGNAME}
 
 
 echo "OK! Completed DL from DEV" ${DEVID} "thr" ${CNCT} 2>&1 | tee -a ${LOGNAME}
