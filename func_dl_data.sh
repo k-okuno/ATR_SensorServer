@@ -28,10 +28,7 @@ function dl_data()
     echo "Download data: (start in 7 sec)"  2>&1 | tee -a ${logfile_name}
     echo "" 2>&1 | tee -a ${logfile_name}
 
-    #################
-    # expect should be used ... -> rewrite.
-    #################
-
+    # telnet, using sleep... this is not flexible at all.->should be done using 'expect'
     ( echo open ${hostname} ${port}
       sleep 3
       echo devinfo
@@ -58,19 +55,52 @@ function dl_data()
 }
 
 
+#################################
+# Function to Download data from a sensor
+# Useage:
+# > ./dl_data <hostname> <port> <data_filename> <logname>
+#################################
 function dl_data-expect()
 {
     local hostname=${1}
     local port=${2}
     local data_file=${3}
     local logfile_name=${4}
-    
-    echo "Download data: (start in 7 sec)"  2>&1 | tee -a ${logfile_name}
+
+    echo "OK. DL data will be saved at: ${EXP_DIR}/" #2>&1 | tee -a ${logfile_name}
+    echo "Time stamp : " ${NOW}         2>&1 | tee -a ${logfile_name}
+    echo "Run script : " ${SCRIPT_NAME} 2>&1 | tee -a ${logfile_name}
+    echo "Device ID  : " ${DEVID}       2>&1 | tee -a ${logfile_name}
+    echo "Connection : " ${CNCT}        2>&1 | tee -a ${logfile_name}
+    echo "Port       : " ${PORT}        2>&1 | tee -a ${logfile_name}
+    echo "           = <USB=20000>,<BT=10000> + <DEV ID>" 2>&1 | tee -a ${logfile_name}
+    echo "File name  : " ${data_file}    2>&1 | tee -a ${logfile_name}
+    echo "Log name   : " ${logfile_name}     2>&1 | tee -a ${logfile_name}
+    echo "Data entry# to DL : " ${WHICHDATA} 2>&1 | tee -a ${logfile_name}
+    echo "" 
+    echo "Download data: (start in a moment)"  2>&1 | tee -a ${logfile_name}
     echo "" 2>&1 | tee -a ${logfile_name}
 
+    # timeout -1 ; no timeout
     expect -c "
     set timeout -1
     spawn telnet ${hostname} ${port}; sleep 1
+    expect \"\r\"
+    send \"echo devinfo\"
+    expect \"\r\"
+    send \"echo getd\"
+    expect \"\r\"
+    send \"echo getmemfreesize\"
+    expect \"\r\"
+    send \"echo getbattstatus\"
+    expect \"\r\"
+    send \"echo getags\"
+    expect \"\r\"
+    send \"echo memcount\"
+    expect \"\r\"
+    send \"echo getmementry ${WHICHDATA}\"
+    expect \"\r\"
+    send \"echo getmementryinfo ${WHICHDATA}\"
     expect \"\r\"
     send \"readmemdata 1\r\"
     expect \"EOF\"
@@ -79,28 +109,6 @@ function dl_data-expect()
     send \"quit\n\"
     " | col -b 2>&1 | tee -a ${data_file}
 }
-
-#    expect \"Escape character is \'\^\]\'\.\n\"
-#    send \"readmemdata 1\n\"
-
-    # expect \"\n\"
-    # send \"readmemdata 1\r\"
-
-# expect telnet>
-# sned \"quit\n\"
-
-
-#    expect Trying 127.0.0.1...  ; send \"getd\n\" 
-# expect \"$ \" ; send \"ls\r\"            # $ が出たら ls を打ち込む
-# expect \"$ \" ; send \"exit\r\"          # $ が出たら exit を打ち込む
-
-
-
-
-
-
-
-
 
 
 
