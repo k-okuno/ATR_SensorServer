@@ -81,6 +81,7 @@ function dl_data-expect()
     echo "Download data: (start in a moment)"  2>&1 | tee -a ${logfile_name}
     echo "" 2>&1 | tee -a ${logfile_name}
 
+    # telnet
     # timeout -1 ; no timeout
     expect -c "
     set timeout -1
