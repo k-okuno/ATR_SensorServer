@@ -82,6 +82,8 @@ source ./func_save_data-log.sh
 #############
 # Useage:
 # > ./if_started <host> <port>
+# in future
+# > ./if_started <host> <port> <key_line>
 #############
 function if_started()
 {
@@ -90,20 +92,35 @@ function if_started()
     local dev_id=$(( ${port} % 10000))
     local tmpfile="tmpfile.txt"
     local status=-1
+    local key_line=7
 
     echo "Confirming if measurment stared ..."
-    ( echo open ${host} ${port}
-      sleep 3; echo "status"
-      sleep 1
-    ) | telnet | col -b 2>&1 | tee ${tmpfile}
-    
+
+    # telnet
+    # timeout -1 ; no timeout
+    expect -c "
+    set timeout -1
+    spawn telnet ${HOST} ${PORT}; sleep 3
+    expect \"\r\"     ; sleep ${DURATION}
+    send \"status\r\"
+    expect \"\r\"     ; sleep ${DURATION}
+    send \"\035\r\"
+    expect \"telnet\>\"
+    send \"quit\r\"
+    " | col -b 2>&1 | tee ${tmpfile}
+
+    # ( echo open ${host} ${port}
+    #   sleep 3; echo "status"
+    #   sleep 1
+    # ) | telnet | col -b 2>&1 | tee ${tmpfile}
+        
     if [ ! -f ${tmpfile} ] ; then
 	echo "ERROR: " ${tmpfile} "does not exist." 
 	return 1
     else
 	local ct=1
 	while read line; do
-	    if [ ${ct} -eq 4 ]; then
+	    if [ ${ct} -eq ${key_line} ]; then
 		status=${line}
 		break
 	    fi
@@ -119,16 +136,17 @@ function if_started()
 	echo "ERROR: measurement NOT started."
 	echo "Device ID:" ${dev_id}
 	echo "CHECK 'Device ID' 'Power ON/OFF' 'Connection'  and 'SensorServer.exe'"
-	rm ${tmpfile}
+#	rm ${tmpfile}
 	return 1
     fi
 }
 
+
 #############
 # Useage:
-# > ./start_sensor <host name> <port>
+# > ./start_measuring <host name> <port>
 #############
-function start_sensor()
+function start_measuring()
 {
     echo "Time stamp  : " ${NOW}       
     echo "Running     : " ${SCRIPT_NAME}
@@ -140,19 +158,28 @@ function start_sensor()
     echo ""
     echo "Sending 'getags', 'getbattstatus', 'clearmem', 'getmemfreesize'"
     echo "then 'start' command."
-    ( echo open ${HOST} ${PORT}
-      sleep 3
-      echo getags
-      sleep ${DURATION}
-      echo getbattstatus
-      sleep ${DURATION}
-      echo clearmem
-      sleep ${DURATION}
-      echo getmemfreesize
-      sleep ${DURATION}
-      echo start
-      sleep 1
-    ) | telnet #| col -b 2>&1 | tee -a ${LOGNAME}
+    
+    # telnet
+    # timeout -1 ; no timeout
+    expect -c "
+    set timeout -1
+    spawn telnet ${HOST} ${PORT}; sleep 3
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"getags\r\"
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"getbattstatus\r\"
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"clearmem\r\"
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"getmemfreesize\r\"
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"start\r\"
+    expect \"\r\"      ; sleep 1
+    send \"\035\r\"
+    expect \"telnet\>\"
+    send \"quit\r\"
+    "        
+    return 0
 }
 
 
@@ -178,7 +205,7 @@ yes_or_no_while 2>&1 | tee -a ${LOGNAME}
 
 if [ ${PIPESTATUS[0]} -eq 0 ] ; then
     while true; do
-	start_sensor ${HOST} ${PORT}    | col -b 2>&1 | tee -a ${LOGNAME}    
+	start_measuring ${HOST} ${PORT} | col -b 2>&1 | tee -a ${LOGNAME}
 	if_started ${HOST} ${PORT}               2>&1 | tee -a ${LOGNAME}
 	if [ ${PIPESTATUS[0]} -eq 0 ] ; then
 	    echo "OK! started thr "${CNCT}       2>&1 | tee -a ${LOGNAME}
