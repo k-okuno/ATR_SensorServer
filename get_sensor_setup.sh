@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 PROGNAME=$(basename $0)
 VERSION="1.0"
 PARM_MSG="OK"
@@ -14,10 +13,10 @@ HOST="localhost"
 ALL_ARGS=$@
 
 # duration to sleep between command while uisng telnet
-DURATION="0.5"
+DURATION="0.1"
 
 # first ARG is device ID.
-#DEVID=${1}
+DEVID=${1}
 #echo "Default DEV ID: ${DEVID}"
 
 # Directory/Folder to save data and log.
@@ -30,7 +29,6 @@ EXP_DIR="./${DATE}_DEV${DEVID}"
 CNCT="BT"
 
 LOGNAME=sensor_settings-${NOW}-${PORT}-${CNCT}.log
-
 
 
 #############
@@ -64,7 +62,6 @@ function usage()
     echo
     echo "Options:"
     echo "  -h, --help"
-    echo "  --debug"        
     echo "  -c, --connection [bt/usb]"
     echo "  -s, --sleep-time [sec]"    
     echo
@@ -87,16 +84,6 @@ do
             usage
             exit 1
             ;;
-        '--version' )
-            echo $VERSION
-            exit 1
-            ;;
-        '--debug' )
-	    DEBUG="TRUE"
-	    echo "DEBUG: " ${DEBUG}
-	    param="${PARM_MSG}"		
-	    shift 1
-            ;;	
         '-c' |'--connection' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 echo "$PROGNAME: option requires an argument -- $1 [bt/usb]" 1>&2
@@ -168,48 +155,55 @@ echo "out: devid: ${DEVID}"
 
 #############
 # Useage:
-# > ./start_sensor <host name> <port>
+# > ./start_sensor <hostname> <port>
 #############
 function get_sensor_setting()
 {
+    
     echo "Time stamp  : " ${NOW}       
     echo "Running     : " ${PROGNAME}
     echo "Device ID   : " ${DEVID}
     echo "Connetion   : " ${CNCT}
-    echo "Port        : " ${PORT}  
+    echo "Port        : " ${PORT}
     echo "Log         : " ${LOGNAME}
-
     echo "Sensor settings:"
-    echo ""
 
     # telnet
     # timeout -1 ; no timeout
     expect -c "
     set timeout -1
-    spawn telnet ${hostname} ${port}; sleep 1
+    spawn telnet ${HOST} ${PORT}; sleep 3
     expect \"\r\"
-    send \"echo getd\"
+    sleep ${DURATION}
+    send \"getd\r\"
     expect \"\r\"
-    send \"echo devinfo\"
+    sleep ${DURATION}
+    send \"devinfo\r\"
+    sleep ${DURATION}
     expect \"\r\"
-    send \"echo getags\"
+    sleep ${DURATION}
+    send \"getags\r\"
     expect \"\r\"
-    send \"echo getgeo\"
+    sleep ${DURATION}
+    send \"getgeo\r\"
     expect \"\r\"
-    send \"echo getpres\"
+    sleep ${DURATION}
+    send \"getpres\r\"
     expect \"\r\"
-    send \"echo getbatt\"
+    sleep ${DURATION}
+    send \"getbatt\r\"
     expect \"\r\"
-    send \"echo getbattinfo\"
+    sleep ${DURATION}
+    send \"getbattstatus\r\"
     expect \"\r\"
-    send \"echo getbattstatus\"
+    sleep ${DURATION}
+    send \"getmemfreesize\r\"
     expect \"\r\"
-    send \"echo getmemfreesize\"
-    expect \"\r\"
+    sleep ${DURATION}
     send \"\035\r\"
     expect \"telnet\>\"
     send \"quit\n\"
-    " # | col -b 2>&1 | tee -a ${LOGNAME}
+    "  | col -b 2>&1 | tee -a ${LOGNAME}
 
     return 0
 }
@@ -218,20 +212,27 @@ function get_sensor_setting()
 ###################
 # main
 ###################
-get_args $@  #2>&1 | tee -a ${LOGNAME}
-echo "out: CNCT: ${CNCT}"
-echo "out2: devid: ${DEVID}"
-exit 0
-
-check_func_rtv
+# get_args $@  #2>&1 | tee -a ${LOGNAME}
+# echo "out: CNCT: ${CNCT}"
+# echo "out2: devid: ${DEVID}"
+# exit 0
+#check_func_rtv
 
 # assigning 1 or 2 for 1st digit of <port>.
 COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi
 # Port# : <BT=1 or USB=2><DEVID>
 PORT=${COM}${DEVID}
 
+
+check_args ${@} 2>&1 | tee -a ${LOGNAME}
+check_func_rtv
+
+
+echo "host: ${HOST}"
+echo "port: ${PORT}"
 echo "OK. retrieving sensor settings..."
-get_sensor_setting ${HOST} ${PORT}    | col -b 2>&1 | tee -a ${LOGNAME}
+echo
+get_sensor_setting ${HOST} ${PORT}   # | col -b 2>&1 | tee -a ${LOGNAME}
 
 echo "Saving sensor_setting log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
