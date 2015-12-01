@@ -10,7 +10,7 @@ SCRIPT_NAME=${0}
 ALL_ARGS=$@
 
 # sleep time
-DURATION="0.5"
+DURATION="0.1"
 
 #DEVID="1691"
 DEVID=${1}
