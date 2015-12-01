@@ -40,15 +40,23 @@ check_func_rtv()
     fi
 }
 
+################################
 # load functions to check dir, save data/log.
+################################
 source ./func_save_data-log.sh
 
+
+################################
 # creat dummy files
+################################
 touch ${FILENAME}
 touch ${LOGNAME}
 touch temp.txt
 
 
+################################
+# main
+################################
 echo "Saving DL data and log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
 check_func_rtv
