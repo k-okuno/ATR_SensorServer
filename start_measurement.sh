@@ -144,9 +144,9 @@ function if_started()
 
 #############
 # Useage:
-# > ./start_measuring <host name> <port>
+# > ./start_sensing <host name> <port>
 #############
-function start_measuring()
+function start_sensing()
 {
     echo "Time stamp  : " ${NOW}       
     echo "Running     : " ${SCRIPT_NAME}
@@ -205,7 +205,7 @@ yes_or_no_while 2>&1 | tee -a ${LOGNAME}
 
 if [ ${PIPESTATUS[0]} -eq 0 ] ; then
     while true; do
-	start_measuring ${HOST} ${PORT} | col -b 2>&1 | tee -a ${LOGNAME}
+	start_sensing ${HOST} ${PORT}   | col -b 2>&1 | tee -a ${LOGNAME}
 	if_started ${HOST} ${PORT}               2>&1 | tee -a ${LOGNAME}
 	if [ ${PIPESTATUS[0]} -eq 0 ] ; then
 	    echo "OK! started thr "${CNCT}       2>&1 | tee -a ${LOGNAME}
