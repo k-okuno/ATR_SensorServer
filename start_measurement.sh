@@ -9,6 +9,7 @@ HOST="localhost"
 SCRIPT_NAME=${0}
 ALL_ARGS=$@
 
+# for start measuring, 0.5 seems to work.
 DURATION="0.5"
 
 # DEVID as the arg.
@@ -95,7 +96,6 @@ function if_started()
     local key_line=7
 
     echo "Confirming if measurment stared ..."
-
     # telnet
     # timeout -1 ; no timeout
     expect -c "
