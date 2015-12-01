@@ -11,6 +11,7 @@ function print_usage()
 # get_argsにしたい。Default値とかを設定したり、--port等を使って設定したい
 # getopt, getopts
 # 参考: http://shellscript.sunone.me/parameter.html
+# これは不使用にすべき。良くない。
 # Usage:
 # check_args $@
 ###############################
