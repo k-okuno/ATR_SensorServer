@@ -87,34 +87,33 @@ function dl_data-expect()
     set timeout -1
     spawn telnet ${hostname} ${port}; sleep 1
     expect \"\r\"
-    send \"echo devinfo\"
+    send \"getd\r\"
     expect \"\r\"
-    send \"echo getd\"
+    send \"devinfo\r\"
     expect \"\r\"
-    send \"echo getmemfreesize\"
+    send \"getmemfreesize\r\"
     expect \"\r\"
-    send \"echo getbattstatus\"
+    send \"getbattstatus\r\"
     expect \"\r\"
-    send \"echo getags\"
+    send \"getags\r\"
     expect \"\r\"
-    send \"echo memcount\"
+    send \"memcount\r\"
     expect \"\r\"
-    send \"echo getmementry ${WHICHDATA}\"
+    send \"getmementry ${WHICHDATA}\r\"
     expect \"\r\"
-    send \"echo getmementryinfo ${WHICHDATA}\"
+    send \"getmementryinfo ${WHICHDATA}\r\"
     expect \"\r\"
     send \"readmemdata 1\r\"
     expect \"EOF\"
     send \"\035\r\"
     expect \"telnet\>\"
     send \"quit\n\"
-    " | col -b 2>&1 | tee -a ${data_file}
+    " | col -b 2>&1 | tee -a ${data_file}    
+#    " | col -b 2>&1 > ${data_file}
+    
+    echo "OK. Completed DL data" 2>&1 | tee -a ${logfile_name}
+    return 0
 }
-
-
-
-
-
 
 
 
