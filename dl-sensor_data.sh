@@ -80,8 +80,8 @@ check_cnct ${HOST} ${PORT} | tee -a ${LOGNAME}
 check_func_rtv
 
 #dl_data ${HOST} ${PORT} | col -b 2>&1 | tee -a ${FILENAME}
-dl_data ${HOST} ${PORT} ${FILENAME} ${LOGNAME}
-echo -n "OK. Copleted time: " `date +%Y%m%d-%H%M_%S` 2>&1 | tee -a ${LOGNAME}
+dl_data-expect ${HOST} ${PORT} ${FILENAME} ${LOGNAME}
+echo -n "OK. Copleted timestamp: " `date +%Y%m%d-%H%M_%S` 2>&1 | tee -a ${LOGNAME}
 echo ""
 echo "Saving DL data and log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
