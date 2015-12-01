@@ -55,6 +55,8 @@ source ./func_save_data-log.sh
 #############
 # Useage:
 # > ./if_stopped <host> <port>
+# in future
+# > ./if_started <host> <port> <key_line>
 #############
 function if_stopped()
 {
@@ -64,12 +66,21 @@ function if_stopped()
     local tmpfile="tmpfile.txt"
     local status=-1
     local bt_no_measurement=2
+    local key_line=7
 
     echo "Confirming if measurment stopped ..."
-    ( echo open ${host} ${port}
-      sleep 3; echo "status"
-      sleep 1
-    ) | telnet | col -b 2>&1 | tee ${tmpfile}
+    # telnet
+    # timeout -1 ; no timeout
+    expect -c "
+    set timeout -1
+    spawn telnet ${HOST} ${PORT}; sleep 3
+    expect \"\r\"     ; sleep ${DURATION}
+    send \"status\r\"
+    expect \"\r\"     ; sleep ${DURATION}
+    send \"\035\r\"
+    expect \"telnet\>\"
+    send \"quit\r\"
+    " | col -b 2>&1 | tee ${tmpfile}
     
     if [ ! -f ${tmpfile} ] ; then
 	echo "ERROR: " ${tmpfile} "does not exist." 
@@ -77,8 +88,8 @@ function if_stopped()
     else
 	local ct=1
 	while read line; do
-	    if [ ${ct} -eq 4 ]; then
-		status=${line}
+	    if [ ${ct} -eq ${key_line} ]; then
+		status=${line} # read 'key_line' as 'status'
 		break
 	    fi
 	    ct=$((ct + 1))
@@ -102,9 +113,9 @@ function if_stopped()
 
 #############
 # Useage:
-# > ./start_sensor <host name> <port>
+# > ./start_sensing <host name> <port>
 #############
-function stop_sensor()
+function stop_sensing()
 {
     echo "Time stamp  : " ${NOW}       
     echo "Running     : " ${SCRIPT_NAME}
@@ -115,15 +126,34 @@ function stop_sensor()
     echo "Log         : " ${LOGNAME}
     echo ""
     echo "Sending 'stop' command."
-    ( echo open ${HOST} ${PORT}
-      sleep 3
-      echo getmemfreesize
-      sleep ${DURATION}
-      echo getbattstatus
-      sleep ${DURATION}
-      echo stop
-      sleep 1
-    ) | telnet #| col -b 2>&1 | tee -a ${LOGNAME}
+
+        # telnet
+    # timeout -1 ; no timeout
+    expect -c "
+    set timeout -1
+    spawn telnet ${HOST} ${PORT}; sleep 3
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"stop\r\"
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"getmemfreesize\r\"
+    expect \"\r\"      ; sleep ${DURATION}
+    send \"getbattstatus\r\"
+    expect \"\r\"      ; sleep 0.5
+    send \"\035\r\"
+    expect \"telnet\>\"
+    send \"quit\r\"
+    "        
+
+    # ( echo open ${HOST} ${PORT}
+    #   sleep 3
+    #   echo getmemfreesize
+    #   sleep ${DURATION}
+    #   echo getbattstatus
+    #   sleep ${DURATION}
+    #   echo stop
+    #   sleep 1
+    # ) | telnet #| col -b 2>&1 | tee -a ${LOGNAME}
+    return 0
 }
 
 
@@ -136,15 +166,15 @@ check_func_rtv
 echo "OK. stopping measuring ..."
 
 while true; do
-    stop_sensor ${HOST} ${PORT}    | col -b 2>&1 | tee -a ${LOGNAME}
-    if_stopped  ${HOST} ${PORT}             2>&1 | tee -a ${LOGNAME}
+    stop_sensing ${HOST} ${PORT}    | col -b 2>&1 | tee -a ${LOGNAME}
+    if_stopped   ${HOST} ${PORT}             2>&1 | tee -a ${LOGNAME}
     if [ ${PIPESTATUS[0]} -eq 0 ] ; then
-	echo "OK! stopped thr "${CNCT}      2>&1 | tee -a ${LOGNAME}
-	echo "Device ID: " ${DEVID}         2>&1 | tee -a ${LOGNAME}	
+	echo "OK! stopped thr "${CNCT}       2>&1 | tee -a ${LOGNAME}
+	echo "Device ID: " ${DEVID}          2>&1 | tee -a ${LOGNAME}	
 	break 
     else
-	echo "NOT stopped!"                 2>&1 | tee -a ${LOGNAME}
-	echo "Re-trying ...(in 3 sec)"      2>&1 | tee -a ${LOGNAME}
+	echo "NOT stopped!"                  2>&1 | tee -a ${LOGNAME}
+	echo "Re-trying ...(in 3 sec)"       2>&1 | tee -a ${LOGNAME}
 	sleep 3
     fi
 done 
