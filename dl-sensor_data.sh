@@ -10,7 +10,7 @@ SCRIPT_NAME=${0}
 ALL_ARGS=$@
 
 # sleep time
-DURATION="0.1"
+DURATION="0.2"
 
 #DEVID="1691"
 DEVID=${1}
@@ -76,6 +76,7 @@ source ./func_dl_data.sh
 ##########################
 check_args ${@} 2>&1 | tee -a ${LOGNAME}
 check_func_rtv
+
 check_cnct ${HOST} ${PORT} | tee -a ${LOGNAME}
 check_func_rtv
 
