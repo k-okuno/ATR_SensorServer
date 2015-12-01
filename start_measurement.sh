@@ -121,7 +121,7 @@ function if_started()
 	local ct=1
 	while read line; do
 	    if [ ${ct} -eq ${key_line} ]; then
-		status=${line}
+		status=${line} # read 'key_line' as 'status'
 		break
 	    fi
 	    ct=$((ct + 1))
