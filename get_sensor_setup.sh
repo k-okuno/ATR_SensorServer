@@ -173,33 +173,23 @@ function get_sensor_setting()
     expect -c "
     set timeout -1
     spawn telnet ${HOST} ${PORT}; sleep 3
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"getd\r\"
-    expect \"\r\"
-    sleep ${DURATION}
-    send \"devinfo\r\"
-    sleep ${DURATION}
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
+    send \"devinfo\r\"; sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"getags\r\"
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"getgeo\r\"
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"getpres\r\"
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"getbatt\r\"
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"getbattstatus\r\"
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"getmemfreesize\r\"
-    expect \"\r\"
-    sleep ${DURATION}
+    expect \"\r\"     ; sleep ${DURATION}
     send \"\035\r\"
     expect \"telnet\>\"
     send \"quit\n\"
