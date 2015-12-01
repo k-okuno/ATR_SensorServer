@@ -10,7 +10,7 @@ DEVID=${1}
 SCRIPT_NAME=${0}
 
 # sleep time
-DURATION="0.5"
+DURATION="0.1"
 # DL time to wait (sleep)
 DLTIME="180" # for USB
 
