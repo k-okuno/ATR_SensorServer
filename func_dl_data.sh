@@ -108,7 +108,7 @@ function dl_data-expect()
     send \"\035\r\"
     expect \"telnet\>\" ; sleep ${DURATION}
     send \"quit\n\"
-    " | col -b 2>&1 | tee -a ${data_file}    
+    " | col -b 2>&1 | tee -a ${data_file}
 #    " | col -b 2>&1 > ${data_file}
     
     echo "OK. Completed DL data" 2>&1 | tee -a ${logfile_name}
