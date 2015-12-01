@@ -26,9 +26,9 @@ function check_args()
 	print_usage
 	return 1
     else
-	echo "OK. # of argument checed"
+	echo "OK. # of argument checked"
 	echo "OK. Port      :" ${port}
-	echo "OK. Device ID : " ${dev_id}  
+	echo "OK. Device ID :" ${dev_id}  
 	return 0
     fi
 }
