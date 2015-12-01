@@ -86,27 +86,27 @@ function dl_data-expect()
     expect -c "
     set timeout -1
     spawn telnet ${hostname} ${port}; sleep 1
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"getd\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"devinfo\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"getmemfreesize\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"getbattstatus\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"getags\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"memcount\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"getmementry ${WHICHDATA}\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"getmementryinfo ${WHICHDATA}\r\"
-    expect \"\r\"
+    expect \"\r\"       ; sleep ${DURATION}
     send \"readmemdata 1\r\"
-    expect \"EOF\"
+    expect \"EOF\"      ; sleep ${DURATION}
     send \"\035\r\"
-    expect \"telnet\>\"
+    expect \"telnet\>\" ; sleep ${DURATION}
     send \"quit\n\"
     " | col -b 2>&1 | tee -a ${data_file}    
 #    " | col -b 2>&1 > ${data_file}
