@@ -25,9 +25,11 @@ EXP_DIR="./${DATE}_DEV${DEVID}"
 
 # Set connection means
 # BT -> 1, USB -> 2
-#CNCT="USB"
+# Default: BT
 CNCT="BT"
+#CNCT="USB"
 
+# LOG file name.
 LOGNAME=sensor_settings-${NOW}-${PORT}-${CNCT}.log
 
 
