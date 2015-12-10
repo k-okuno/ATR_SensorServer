@@ -12,17 +12,20 @@ DATE=`date +%Y%m%d`
 TIME=`date +%H%M_%S`
 NOW=${DATE}-${TIME}
 
+PROGNAME=$(basename $0)
+SCRIPT_NAME=$(basename $0)
 HOST="localhost"
-
-SCRIPT_NAME=${0}
 ALL_ARGS=$@
 
 # sleep time inbetween sending command in "expect+telnet"
 # for setting up sensor, 1sec seems to work.
-DURATION="1"
+DURATION="2"
 
-# device ID
-DEVID=${1}
+# Default device ID
+DEVID="-1"
+
+# Default: non-interactive mode.
+ALL_Y=TRUE
 
 # Directory/Folder where the script is run.
 EXE_DIR=`pwd`
@@ -33,14 +36,22 @@ EXP_DIR="./${DATE}_DEV${DEVID}"
 
 # Set connection means
 # BT -> 1, USB -> 2
-#CNCT="USB"
+# Defualt is "BT"
 CNCT="BT"
-COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi
+#CNCT="USB"
 
-# Port# : <BT=1 or USB=2><DEVID>
-PORT=${COM}${DEVID}
-
+# LOG file name
 LOGNAME=setup-${PORT}-${CNCT}-${NOW}.log
+
+#############
+# load functions
+# to check connection
+# to check file dirctory to save data/log.
+#############
+source ./func_cnct_check.sh
+source ./func_save_data-log.sh
+source ./func_if_num.sh
+
 
 
 #############
@@ -54,17 +65,6 @@ check_func_rtv()
 	exit 1
     fi
 }
-
-
-
-#############
-# load functions
-# to check connection
-# to check file dirctory to save data/log.
-#############
-source ./func_cnct_check.sh
-source ./func_save_data-log.sh
-
 
 #############
 # Useage:
@@ -107,7 +107,7 @@ function configure_sensor()
     echo "Connetion   : " ${CNCT}
     echo "Port        : " ${PORT}  
     echo "Setup Log   : " ${LOGNAME}
-    echo "Start Configuring and Checking."    
+    echo "Start Configuring and Checking. (take a while)"    
 
     # telnet
     # timeout -1 ; no timeout
@@ -149,12 +149,104 @@ function configure_sensor()
 }
 
 
+##########################
+# print usage
+##########################
+usage() {
+    echo
+    echo "Usage: $PROGRAM [-y] [-h] [-c bt/usb] <DEVICE_ID> "
+    echo "  --debug. not implemented yet."            
+    echo "  -h, --help"
+    echo "  -y, --force-y"    
+    echo "  -c, --connection [bt/usb]"
+    echo "  -s, --sleep-time [sec]"
+    echo
+    exit 1
+}
+
+###############################
+# Check args and Set options
+###############################
+for OPT in "$@"	   
+do
+    case "$OPT" in
+        '-h'|'--help' )
+	    usage
+	    exit 1
+	    ;;
+        '-c'|'--connection' )
+	    if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+	    fi
+	    cnct="$2"
+	    if [ ${cnct} = "usb" ]; then
+		CNCT="USB"
+	    elif [ ${cnct} = "bt" ]; then
+		CNCT="BT"
+	    else
+		echo "ERROR: -c 'bt or usb'."
+		usage
+	    fi
+	    shift 2		
+	    ;;
+        '-y'|'--force-y' )
+	    ALL_Y=TRUE
+	    echo "ALL_Y: ${ALL_Y}"
+	    shift 1
+	    ;;
+	'-s'|'--sleep-time' )
+	    if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
+		usage
+	    fi
+	    if_num ${2} # this works only for "integer"
+	    if [ $? -ne 0 ]; then
+		echo "ERROR: not Numeric: $1 <= [Integer]" 1>&2
+		usage
+		exit 1
+	    else		
+		DURATION=${2}
+		echo "sleep time: ${DURATION}"
+	    fi
+	    shift 2		
+	    ;;	
+        -*)
+	    echo "ERROR: $PROGNAME: illegal option -- '$(echo $1 | sed 's/^-*//')'" 1>&2
+	    usage
+	    exit 1
+	    ;;
+        *)
+	    if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
+                #param=( ${param[@]} "$1" )
+                param+=( "$1" )
+		if_num ${param}
+		if [ $? -ne 0 ]; then
+		    echo "ERROR: not Numeric: $1 <= [Integer]" 1>&2
+		    usage
+		    exit 1
+		else
+		    DEVID=${param}
+		    echo "DEVID: ${DEVID}"
+		    shift 1
+		fi
+	    fi
+	    ;;
+    esac
+done
+
+if [ -z $param ]; then
+    echo "ERROR: $PROGNAME: too few arguments" 1>&2
+    usage
+    exit 1
+fi
+
+COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi		    
+PORT=${COM}${DEVID}
 ###################
 # main
 ###################
-check_args ${@} 2>&1 | tee -a ${LOGNAME}
-check_func_rtv
-check_cnct ${HOST} ${PORT} 2>&1 | tee -a ${LOGNAME}
+check_cnct ${HOST} ${PORT} ${ALL_Y} 2>&1 | tee -a ${LOGNAME}
 check_func_rtv
 
 echo "OK. setting sensor up ...(It takes 10 sec)"
