@@ -90,7 +90,6 @@ do
 	    fi
 	    shift 2		
 	    ;;
-	
 	'-s'|'--sleep-time' )
 	    if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
@@ -102,12 +101,11 @@ do
 		usage
 		exit 1
 	    else		
-		DURATION={2}
+		DURATION=${2}
 		echo "sleep time: ${DURATION}"
 	    fi
 	    shift 2		
-	    ;;
-		
+	    ;;	
         -*)
 	    echo "ERROR: $PROGNAME: illegal option -- '$(echo $1 | sed 's/^-*//')'" 1>&2
 	    usage
