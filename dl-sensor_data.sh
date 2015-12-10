@@ -21,13 +21,6 @@ EXE_DIR=`pwd`
 # Directory/Folder to save data and log.
 EXP_DIR="./${DATE}_DEV${DEVID}"
 
-# DL time; sleep time to complete downloading data.
-# USB w/o tee : 2 min per connection.
-# USB w/  tee : 3 min per connection.
-# TB w/, w/o tee : 7-15 min (900sec) per 1-4 connection.
-#DLTIME="180" # for USB
-DLTIME="120" # for BT
-
 # Set connection means
 # CNCT=USB or CNCT=BT
 CNCT="USB"
@@ -87,6 +80,3 @@ echo ""
 echo "Saving DL data and log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
 save_files ${EXP_DIR} ${LOGNAME} ${FILENAME}
-
-#if [ $? -ne 0 ]; then echo "ERROR: failed to creat dir ${EXP_DIR}"; fi
-#if [ $? -ne 0 ]; then echo "ERROR: failed to save data ${LOGNAME} and ${FILENAME}"; fi
