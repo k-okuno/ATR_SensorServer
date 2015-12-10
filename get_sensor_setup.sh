@@ -1,30 +1,25 @@
 #!/bin/bash
 
-PROGNAME=$(basename $0)
-VERSION="1.0"
-PARM_MSG="OK"
-
 DATE=`date +%Y%m%d`
 TIME=`date +%H%M_%S`
 NOW=${DATE}-${TIME}
 
+PROGNAME=$(basename $0)
 HOST="localhost"
 
 ALL_ARGS=$@
 
-# duration to sleep between command while uisng telnet
-DURATION="0.1"
+# Default sleep time between command while uisng telnet
+DURATION="0.2"
 
-# first ARG is device ID.
-DEVID=${1}
-#echo "Default DEV ID: ${DEVID}"
+# Default device ID
+DEVID="-1"
 
 # Directory/Folder to save data and log.
 # this should be shared with other related function in separate text.
 EXP_DIR="./${DATE}_DEV${DEVID}"
 
 # Set connection means
-# BT -> 1, USB -> 2
 # Default: BT
 CNCT="BT"
 #CNCT="USB"
@@ -38,7 +33,6 @@ LOGNAME=sensor_settings-${NOW}-${PORT}-${CNCT}.log
 # to check connection
 # to check file dirctory to save data/log.
 #############
-source ./func_cnct_check.sh
 source ./func_save_data-log.sh
 source ./func_if_num.sh
 
@@ -70,90 +64,82 @@ function usage()
     exit 1
 }
 
-
-
-#################################
-# this part is a template.
-# Usage:
-# > ./get_args $@
-#################################
-function get_args()
-{
-for OPT in "$@"
+###############################
+# Check args and Set options
+###############################
+for OPT in "$@"	   
 do
     case "$OPT" in
         '-h'|'--help' )
-            usage
-            exit 1
-            ;;
-        '-c' |'--connection' )
-            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                echo "$PROGNAME: option requires an argument -- $1 [bt/usb]" 1>&2
-                exit 1		
-	    elif [[ "$2" = "bt" ]] || [[ "$2" = "usb" ]]; then
-		CNCT="$2"
-		echo "CNCT: " ${CNCT}
-		param="${PARM_MSG}"
-                shift 2		
-	    else		
-		echo "$PROGNAME: option requires an argument -- $1 [bt/usb]" 1>&2
-                exit 1		
-            fi	    		
-            ;;
-        '-s'|'--sleep-time' )
-            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                echo "$PROGNAME: option requires an argument -- $1 [sec]" 1>&2
-                exit 1		
+	    usage
+	    exit 1
+	    ;;	
+        '-c'|'--connection' )
+	    if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+	    fi
+	    cnct="$2"
+	    if [ ${cnct} = "usb" ]; then
+		CNCT="USB"
+	    elif [ ${cnct} = "bt" ]; then
+		CNCT="BT"
 	    else
-		if_num ${2} 
-		if [ $? -ne 0 ]; then
-		    echo "Not Numeric: $1 [ARG = sec]" 1>&2
-		    exit 1
-		else
-		    DURATION=${2}
-		    echo "SLEEP_T: " ${DURATION}
-		    param="${PARM_MSG}"
-                    shift 2		    
-		fi
-            fi  
-            ;;	
-        '--'|'-' )
-            shift 1
-            param+=( "$@" )
-	    echo "DEBUG param 1 : " ${param}
-            break
-            ;;
+		echo "ERROR: -c 'bt or usb'."
+		usage
+	    fi
+	    shift 2		
+	    ;;
+	
+	'-s'|'--sleep-time' )
+	    if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
+		usage
+	    fi
+	    #if_num ${2}
+	    if [ $? -ne 0 ]; then
+		echo "ERROR: not Numeric: $1 <= [Integer]" 1>&2
+		usage
+		exit 1
+	    else		
+		DURATION={2}
+		echo "sleep time: ${DURATION}"
+	    fi
+	    shift 2		
+	    ;;
+		
         -*)
-            echo "$PROGNAME: illegal option -- '$(echo $1 | sed 's/^-*//')'" 1>&2
-            exit 1
-            ;;
+	    echo "ERROR: $PROGNAME: illegal option -- '$(echo $1 | sed 's/^-*//')'" 1>&2
+	    usage
+	    exit 1
+	    ;;
         *)
-            if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
+	    if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
                 #param=( ${param[@]} "$1" )
                 param+=( "$1" )
-		echo "DEBUG param 2 : " ${param}
-                shift 1
-            fi
-            ;;
+		if_num ${param}
+		if [ $? -ne 0 ]; then
+		    echo "ERROR: not Numeric: $1 <= [Integer]" 1>&2
+		    usage
+		    exit 1
+		else
+		    DEVID=${param}
+		    echo "DEVID: ${DEVID}"
+		    shift 1
+		fi
+	    fi
+	    ;;
     esac
-DEVID=${1}
-echo "in: devid: ${DEVID}"    
 done
 
-
-DEVID=${1}
-echo "in2: devid: ${DEVID}"    
 if [ -z $param ]; then
-    echo "$PROGNAME: too few arguments" 1>&2
-    echo "Try '$PROGNAME --help' for more information." 1>&2
+    echo "ERROR: $PROGNAME: too few arguments" 1>&2
+    usage
     exit 1
 fi
 
-DEVID=${1}
-echo "out: devid: ${DEVID}"
-}
-
-
+COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi		    
+PORT=${COM}${DEVID}
 
 #############
 # Useage:
@@ -204,22 +190,6 @@ function get_sensor_setting()
 ###################
 # main
 ###################
-# get_args $@  #2>&1 | tee -a ${LOGNAME}
-# echo "out: CNCT: ${CNCT}"
-# echo "out2: devid: ${DEVID}"
-# exit 0
-#check_func_rtv
-
-# assigning 1 or 2 for 1st digit of <port>.
-COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi
-# Port# : <BT=1 or USB=2><DEVID>
-PORT=${COM}${DEVID}
-
-
-check_args ${@} 2>&1 | tee -a ${LOGNAME}
-check_func_rtv
-
-
 echo "host: ${HOST}"
 echo "port: ${PORT}"
 echo "OK. retrieving sensor settings..."
