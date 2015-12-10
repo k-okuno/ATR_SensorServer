@@ -79,8 +79,6 @@ do
 		echo "ERROR: -c 'bt or usb'."
 		usage
 	    fi
-	    COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi		    
-	    echo "CNCT: ${CNCT}"
 	    shift 2		
 	    ;;
         '-y'|'--force-y' )
@@ -118,10 +116,12 @@ if [ -z $param ]; then
     exit 1
 fi
 
+COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi		    
+PORT=${COM}${DEVID}
+
 #############
 # main
 #############
-PORT=${COM}${DEVID}
 
 check_cnct ${HOST} ${PORT} ${ALL_Y}| tee -a ${TMPLOGNAME}
 #check_cnct -y ${HOST} ${PORT} | tee -a ${TMPLOGNAME}
