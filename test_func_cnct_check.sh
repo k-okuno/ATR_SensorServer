@@ -5,11 +5,17 @@
 # Useage:
 # > ./test_func_cnct_check.sh <device id>
 ##############
+
+PROGNAME=$(basename $0)
 HOST="localhost"
 
 SCRIPT_NAME=${0}
 ALL_ARGS=$@
 
+# defualt: NO "force/all yes"
+ALL_Y=FALSE
+
+# device ID
 DEVID=${1}
 
 # Set connection means
@@ -34,16 +40,22 @@ check_func_rtv()
     fi
 }
 
-#############
-# function to test
-#############
-source  ./func_cnct_check.sh
+
+###########################
+# function/files to load
+###########################
+source ./func_cnct_check.sh
+source ./func_get_args.sh
+source ./func_if_num.sh
+
 
 #############
 # main
 #############
-check_args ${ALL_ARGS} 2>&1 | tee ${TMPLOGNAME}
+#check_args ${ALL_ARGS} 2>&1 | tee ${TMPLOGNAME}
+get_opts $@
 check_func_rtv
+
 
 check_cnct ${HOST} ${PORT} | tee -a ${TMPLOGNAME}
 check_func_rtv
