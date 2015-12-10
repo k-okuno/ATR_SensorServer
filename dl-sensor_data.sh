@@ -76,7 +76,8 @@ check_func_rtv
 #dl_data ${HOST} ${PORT} | col -b 2>&1 | tee -a ${FILENAME}
 dl_data-expect ${HOST} ${PORT} ${FILENAME} ${LOGNAME}
 echo -n "OK. Copleted timestamp: " `date +%Y%m%d-%H%M_%S` 2>&1 | tee -a ${LOGNAME}
-echo ""
 echo "Saving DL data and log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
 save_files ${EXP_DIR} ${LOGNAME} ${FILENAME}
+
+exit 0
