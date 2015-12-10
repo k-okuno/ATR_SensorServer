@@ -96,7 +96,7 @@ do
                 echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
 		usage
 	    fi
-	    #if_num ${2}
+	    #if_num ${2} # this works only for "integer"
 	    if [ $? -ne 0 ]; then
 		echo "ERROR: not Numeric: $1 <= [Integer]" 1>&2
 		usage
