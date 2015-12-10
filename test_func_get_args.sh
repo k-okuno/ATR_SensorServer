@@ -20,27 +20,63 @@ function usage()
 {
     echo "Usage: $PROGNAME [OPTIONS] FILE"
 #    echo "  This script is ~."
-    echo
     echo "Options:"
+    echo "  --debug"            
     echo "  -h, --help"
-    echo "      --version"
-    echo "  --debug"        
     echo "  -y, --force-y"    
     echo "  -c, --connection [bt/usb]"
     echo "  -s, --sleep-time [sec]"    
-    echo "  -t, --dl-time [sec]"
     echo
     exit 1
 }
 
 
 
+
 #################################
-# this part is a template.
 # Usage:
 # > ./get_args $@
 #################################
 function get_args()
+{
+    OPT=`getopt -o ab:c --long long-a,  long-b:,long-c -- "$@"`
+    if [ $? != 0 ] ; then
+	exit 1
+    fi
+    eval set -- "$OPT"
+
+    while true
+    do
+	case "$1" in
+	    -a | --long-a)
+		# -a のときの処理
+		shift
+		;;
+	    -b | --long-b)
+		# -b のときの処理
+		shift 2
+		;;
+	    -c | --long-c)
+		# -c のときの処理
+		shift
+		;;
+	    --)
+		shift
+		break
+		;;
+	    *)
+		echo "Internal error!" 1>&2
+		exit 1
+		;;
+	esac
+    done
+}
+
+#################################
+# Usage:
+# > ./get_args $@
+#################################
+function get_args_1()
 {
 for OPT in "$@"
 do
@@ -145,5 +181,5 @@ fi
 ##################################
 # main
 ##################################
-get_args $@
+get_args_1 $@
 
