@@ -38,12 +38,13 @@ function check_args()
 ###################################
 # Function to check connection.
 # Usage:
-# > ./check_cnct <host> <port>
+# > ./check_cnct <host> <port> <all_y>
 ###################################
 function check_cnct()
 {
     local host=${1}
     local port=${2}
+    local all_y=${3}
     local TMPFILE=temp.txt
     local dev_id=$(( ${port} % 10000))
     
@@ -96,11 +97,14 @@ function check_cnct()
 	return 1
     fi
 
-    echo ""
-    echo -n "Ready? press enter (Y) > "
-    read INPUT
-    echo "OK. start in a moment."
-    echo ""
+    if [ ${all_y} != "TRUE" ];then
+	echo ""
+	echo -n "Ready? press enter (Y) > "
+	read INPUT
+    else
+	echo "OK. start in a moment."
+	echo ""
+    fi
     rm ${TMPFILE}
     return 0
 }
