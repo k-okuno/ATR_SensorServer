@@ -20,8 +20,12 @@ usage() {
     exit 1
 }
 
+###############################
+# Check args and Set options
+# It is a template
 # Usage:
 # > get_opts <ALL_ARGS>
+###############################
 function get_opts()
 {
     for OPT in "$@"
