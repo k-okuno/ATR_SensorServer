@@ -15,18 +15,10 @@ DURATION="0.2"
 # Default device ID
 DEVID="-1"
 
-# Directory/Folder to save data and log.
-# this should be shared with other related function in separate text.
-EXP_DIR="./${DATE}_DEV${DEVID}"
-
 # Set connection means
 # Default: BT
 CNCT="BT"
 #CNCT="USB"
-
-# LOG file name.
-LOGNAME=sensor_settings-${NOW}-${PORT}-${CNCT}.log
-
 
 #############
 # load functions
@@ -138,6 +130,10 @@ fi
 
 COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi		    
 PORT=${COM}${DEVID}
+# LOG file name.
+LOGNAME=sensor_settings-${NOW}-${PORT}-${CNCT}.log
+# Directory/Folder to save data and log.
+EXP_DIR="./${DATE}_DEV${DEVID}"
 
 #############
 # Useage:
