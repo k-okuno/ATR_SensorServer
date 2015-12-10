@@ -165,8 +165,14 @@ function get_opts()
 		if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
                     #param=( ${param[@]} "$1" )
                     param+=( "$1" )
-		    echo "param: ${param}"
-                    shift 1
+		    if_num ${param}
+		    if [ $? -ne 0 ]; then
+			echo "ERROR: not Numeric: $1 <= [Integer]" 1>&2
+			exit 1
+		    else
+			echo "param: ${param}"
+			shift 1
+		    fi
 		fi
 		;;
 	esac
