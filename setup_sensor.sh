@@ -30,18 +30,12 @@ ALL_Y=TRUE
 # Directory/Folder where the script is run.
 EXE_DIR=`pwd`
 
-# Directory/Folder to save data and log.
-# 本当は、configファイルに抜き出して、共通化すべき設定。
-EXP_DIR="./${DATE}_DEV${DEVID}"
-
 # Set connection means
 # BT -> 1, USB -> 2
 # Defualt is "BT"
 CNCT="BT"
 #CNCT="USB"
 
-# LOG file name
-LOGNAME=setup-${PORT}-${CNCT}-${NOW}.log
 
 #############
 # load functions
@@ -243,6 +237,12 @@ fi
 
 COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi		    
 PORT=${COM}${DEVID}
+# LOG file name
+LOGNAME=setup-${PORT}-${CNCT}-${NOW}.log
+# Directory/Folder to save data and log.
+# 本当は、configファイルに抜き出して、共通化すべき設定。
+EXP_DIR="./${DATE}_DEV${DEVID}"
+
 ###################
 # main
 ###################
