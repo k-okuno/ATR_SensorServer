@@ -103,7 +103,7 @@ function dl_data-expect()
     expect \"\r\"       ; sleep ${DURATION}
     send \"getmementryinfo ${WHICHDATA}\r\"
     expect \"\r\"       ; sleep ${DURATION}
-    send \"readmemdata 1\r\"
+    send \"readmemdata ${WHICHDATA}\r\"
     expect \"EOF\"      ; sleep ${DURATION}
     send \"\035\r\"
     expect \"telnet\>\" ; sleep ${DURATION}
