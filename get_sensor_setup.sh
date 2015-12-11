@@ -134,6 +134,7 @@ PORT=${COM}${DEVID}
 LOGNAME=sensor_settings-${NOW}-${PORT}-${CNCT}.log
 # Directory/Folder to save data and log.
 EXP_DIR="./${DATE}_DEV${DEVID}"
+echo "OK. args checked."
 
 #############
 # Useage:
@@ -148,7 +149,7 @@ function get_sensor_setting()
     echo "Connetion   : " ${CNCT}
     echo "Port        : " ${PORT}
     echo "Log         : " ${LOGNAME}
-    echo "Sensor settings:"
+    echo "Retrieving sensor settings...(it takes 8 sec)"
 
     # telnet
     # timeout -1 ; no timeout
@@ -186,7 +187,6 @@ function get_sensor_setting()
 ###################
 echo "host: ${HOST}"
 echo "port: ${PORT}"
-echo "OK. retrieving sensor settings..."
 echo
 get_sensor_setting ${HOST} ${PORT}   # | col -b 2>&1 | tee -a ${LOGNAME}
 
