@@ -18,8 +18,8 @@ HOST="localhost"
 ALL_ARGS=$@
 
 # sleep time inbetween sending command in "expect+telnet"
-# for setting up sensor, 1sec seems to work.
-DURATION="1"
+# for setting up sensor, 1 sec does not seem to work.
+DURATION="2"
 
 # Default device ID
 DEVID="-1"
@@ -90,7 +90,7 @@ function configure_sensor()
 #    SET_AGS="setags 1 0 1"
 #    SET_AGS="setags 10 0 1"
 #    SET_AGS="setags 1 0 10"
-    SET_AGS="setags 1 0 5"        
+    SET_AGS="setags 1 0 4"        
     SET_GEO="setgeo 0 0 0"
     SET_PRES="setpres 0 0 0"
     SET_BATT="setbatt 0 0"
@@ -247,8 +247,8 @@ EXP_DIR="./${DATE}_DEV${DEVID}"
 ###################
 # main
 ###################
-check_cnct ${HOST} ${PORT} ${ALL_Y} 2>&1 | tee -a ${LOGNAME}
-check_func_rtv
+#check_cnct ${HOST} ${PORT} ${ALL_Y} 2>&1 | tee -a ${LOGNAME}
+#check_func_rtv
 
 echo "OK. setting sensor up ...(It takes 10 sec)"
 configure_sensor ${HOST} ${PORT}            | col -b 2>&1 | tee -a ${LOGNAME}
