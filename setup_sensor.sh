@@ -19,7 +19,7 @@ ALL_ARGS=$@
 
 # sleep time inbetween sending command in "expect+telnet"
 # for setting up sensor, 1sec seems to work.
-DURATION="2"
+DURATION="1"
 
 # Default device ID
 DEVID="-1"
@@ -89,7 +89,8 @@ function configure_sensor()
     ########    ########
 #    SET_AGS="setags 1 0 1"
 #    SET_AGS="setags 10 0 1"
-    SET_AGS="setags 1 0 10"    
+#    SET_AGS="setags 1 0 10"
+    SET_AGS="setags 1 0 5"        
     SET_GEO="setgeo 0 0 0"
     SET_PRES="setpres 0 0 0"
     SET_BATT="setbatt 0 0"
