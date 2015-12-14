@@ -18,7 +18,6 @@ DEVID="-1"
 # Set connection means
 # Default: BT
 CNCT="BT"
-#CNCT="USB"
 
 #############
 # load functions
@@ -137,19 +136,20 @@ EXP_DIR="./${DATE}_DEV${DEVID}"
 echo "OK. args checked."
 
 #############
-# Useage:
+# Usage:
 # > ./start_sensor <hostname> <port>
 #############
 function get_sensor_setting()
 {
     
     echo "Time stamp  : " ${NOW}       
-    echo "Running     : " ${PROGNAME}
+    echo "Program     : " ${PROGNAME}
     echo "Device ID   : " ${DEVID}
-    echo "Connetion   : " ${CNCT}
     echo "Port        : " ${PORT}
+    echo "Connetion   : " ${CNCT}   
     echo "Log         : " ${LOGNAME}
     echo "Retrieving sensor settings...(it takes 8 sec)"
+    echo 
 
     # telnet
     # timeout -1 ; no timeout
@@ -176,7 +176,7 @@ function get_sensor_setting()
     send \"\035\r\"
     expect \"telnet\>\"
     send \"quit\n\"
-    "  | col -b 2>&1 | tee -a ${LOGNAME}
+    "  #| col -b 2>&1 | tee -a ${LOGNAME}
 
     return 0
 }
@@ -185,10 +185,12 @@ function get_sensor_setting()
 ###################
 # main
 ###################
-echo "host: ${HOST}"
-echo "port: ${PORT}"
+echo "Host        : ${HOST}"
+echo "Port        : ${PORT}"
+echo "Default Conn: BT" 
+echo "Connection  : ${CNCT}"
 echo
-get_sensor_setting ${HOST} ${PORT}   # | col -b 2>&1 | tee -a ${LOGNAME}
+get_sensor_setting ${HOST} ${PORT}  | col -b 2>&1 | tee -a ${LOGNAME}
 
 echo "Saving sensor_setting log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
