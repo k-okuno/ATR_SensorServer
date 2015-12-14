@@ -97,10 +97,10 @@ function configure_sensor()
     SET_D="setd ${SETD_ARG}"
 
     echo "Time stamp  : " ${NOW}       
-    echo "Running     : " ${SCRIPT_NAME}
+    echo "Program     : " ${SCRIPT_NAME}
     echo "Device ID   : " ${DEVID}
+    echo "Port        : " ${PORT}
     echo "Connetion   : " ${CNCT}
-    echo "Port        : " ${PORT}  
     echo "Setup Log   : " ${LOGNAME}
     echo "Start Configuring and Checking. (take a while)"    
 
@@ -250,6 +250,10 @@ EXP_DIR="./${DATE}_DEV${DEVID}"
 #check_cnct ${HOST} ${PORT} ${ALL_Y} 2>&1 | tee -a ${LOGNAME}
 #check_func_rtv
 
+echo "Host        : ${HOST}"
+echo "Port        : ${PORT}"
+echo "Default Conn: BT" 
+echo "Connection  : ${CNCT}"
 echo "OK. setting sensor up ...(It takes 10 sec)"
 configure_sensor ${HOST} ${PORT}            | col -b 2>&1 | tee -a ${LOGNAME}
 # if_configured ${HOST} ${PORT} | col -b 2>&1 | tee -a ${LOGNAME}
