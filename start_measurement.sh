@@ -129,8 +129,10 @@ function if_started()
     fi
 
     if [ ${status} -eq 3 ]; then
+	echo "status: ${status}"
 	echo "OK. confimred starting measurement."
 	echo "OK. Device ID:" ${dev_id}
+	rm ${tmpfile}	
 	return 0
     else
 	echo "ERROR: measurement NOT started."
@@ -201,7 +203,7 @@ echo "OK ? "
 # Type "yes" to start measuring.
 # All data will be cleared prior to the measurement
 ###############################################
-yes_or_no_while 2>&1 | tee -a ${LOGNAME}
+#yes_or_no_while 2>&1 | tee -a ${LOGNAME}
 
 if [ ${PIPESTATUS[0]} -eq 0 ] ; then
     while true; do
