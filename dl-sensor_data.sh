@@ -11,8 +11,10 @@ SCRIPT_NAME=$(basename $0)
 
 ALL_ARGS=$@
 
+# Default: non-interactive mode
+ALL_Y=TRUE
 # Default: interactive mode
-ALL_Y=FALSE
+#ALL_Y=FALSE
 
 # sleep time
 DURATION="0.2"
