@@ -90,7 +90,7 @@ function configure_sensor()
 #    SET_AGS="setags 1 0 1"
 #    SET_AGS="setags 10 0 1"
 #    SET_AGS="setags 1 0 10"
-    SET_AGS="setags 1 0 4"        
+    SET_AGS="setags 2 0 1"        
     SET_GEO="setgeo 0 0 0"
     SET_PRES="setpres 0 0 0"
     SET_BATT="setbatt 0 0"
