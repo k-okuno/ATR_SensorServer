@@ -26,6 +26,9 @@ backup-prog:
 	fi
 
 backup:
+	if [ ! -d $(DEST) ] ;\
+	then mkdir $(DEST) ;\
+	fi
 	rsync -av ${EXP_DATE}_DEV* ${DEST}
 
 clean:
