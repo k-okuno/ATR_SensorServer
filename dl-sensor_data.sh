@@ -91,10 +91,18 @@ function yes_or_no_clear_data()
 #############
 # function to clear all the data
 # NO going back!
+# Usage
+# > clear_all_data <host> <port>
 #############
 function clear_all_data()
 {
+    local all_y="FALSE"
+#    local all_y="TRUE"
+    
     local duration=0.5
+    local host=${1}
+    local port=${2}
+    local logname=clear_all_data-${port}-${NOW}.log
     
     echo ""
     echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
@@ -104,15 +112,20 @@ function clear_all_data()
     echo ""
     echo "NO going back!"
     echo ""
-    echo "OK to clear *ALL* the Data?"
-    echo -n "Press Enter(Y) or Ctrl-c(No) > "
-    read INPUT
+    if [ ${all_y} != "TRUE" ];then
+	echo "OK to clear *ALL* the Data?"
+	echo -n "Press Enter(Y) or Ctrl-c(No) > "
+	read INPUT
+    else
+	echo "OK, about to clear *ALL* the Data."
+    fi    
+
 
     # telnet
     # timeout -1 ; no timeout
     expect -c "
     set timeout -1
-    spawn telnet ${HOST} ${PORT}; sleep 3
+    spawn telnet ${host} ${port}; sleep 3
     expect \"\r\"      ; sleep ${duration}
     send \"clearmem\r\"
     expect \"\r\"      ; sleep ${duration}
@@ -121,7 +134,11 @@ function clear_all_data()
     send \"\035\r\"
     expect \"telnet\>\"
     send \"quit\r\"
-    "
+    " | col -b 2>&1 | tee -a ${logname}
+
+    echo "OK. sent command to clear ALL the data."
+    check_file_dir ${EXP_DIR}
+    save_files ${EXP_DIR} ${logname} 
     return 0
 }
 
@@ -244,7 +261,7 @@ fi
 COM=2; if [ ${CNCT} = "BT" ]; then COM=1; fi		    
 PORT=${COM}${DEVID}
 # setting up File name
-FILENAME=${PORT}-${NOW}-${WHICHDATA}.csv
+FILENAME=data-${PORT}-${NOW}-${WHICHDATA}.csv
 LOGNAME=${PORT}-${NOW}-${WHICHDATA}.log
 # Directory/Folder to save data and log.
 EXP_DIR="./${DATE}_DEV${DEVID}"
@@ -263,9 +280,7 @@ check_file_dir ${EXP_DIR}
 save_files ${EXP_DIR} ${LOGNAME} ${FILENAME}
 
 #yes_or_no_clear_data
-clear_all_data
+clear_all_data ${HOST} ${PORT}
 check_func_rtv
-echo ""
-echo "OK, sent command to clear ALL the data."
 
 exit 0
