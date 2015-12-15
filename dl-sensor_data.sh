@@ -130,7 +130,7 @@ function clear_all_data()
 ##########################
 usage() {
     echo
-    echo "Usage: $PROGRAM [-y] [-h] [-c bt/usb] <DEVICE_ID> "
+    echo "Usage: $PROGRAM [-y] [-i] [-h] [-d which_data ] [-c bt/usb] <DEVICE_ID> "
     echo "  --debug. not implemented yet."            
     echo "  -h, --help"
     echo "  -y, --force-y"
