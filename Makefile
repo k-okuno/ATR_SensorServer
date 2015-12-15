@@ -3,9 +3,11 @@
 MV	= mv -f
 PWD     = `pwd`
 DATE 	= `date '+%Y%m%d-%H%M'`
+EXP_DATE = `date '+%Y%m%d'`
 
-BACKUP_DIR    = backups
+BACKUP_DIR = backups
 
+DEST = backups
 
 TARGET_FILES =  check_connection.sh default.conf dl-sensor_data.sh \
 		func_cnct_check.sh func_dl_data.sh func_save_data-log.sh \
@@ -14,16 +16,7 @@ TARGET_FILES =  check_connection.sh default.conf dl-sensor_data.sh \
 		test_func_save_data-log.sh get_sensor_setup.sh template_get_args.sh \
 		func_get_args.sh test_func_get_args.sh func_if_num.sh
 
-# backup:
-# 	if [ ! -d $(BACKUP_DIR) ] ;\
-# 	then mkdir $(PWD)/$(BACKUP_DIR) ;\
-# 	fi
-# 	for TARGET in $(TARGET_FILES); do (cp $$TARGET $(BACKUP_DIR)/$$TARGET.$(DATE).bak ) done;
-# 	if [ -e $ $(PWD)/*.bak ] ;\
-# 	then $(MV) $(PWD)/*.bak $(PWD)/$(BACKUP_DIR)/ ;\
-# 	fi
-
-backup:
+backup-prog:
 	if [ ! -d $(BACKUP_DIR) ] ;\
 	then mkdir $(PWD)/$(BACKUP_DIR) ;\
 	fi
@@ -32,5 +25,8 @@ backup:
 	then $(MV) $(PWD)/*.zip $(PWD)/$(BACKUP_DIR)/ ;\
 	fi
 
+backup:
+	rsync -av ${EXP_DATE}_DEV* ${DEST}
+
 clean:
-	echo "not yet"
+	$(RM) ./*~ ./*.stackdump ./*.log ./*.csv
