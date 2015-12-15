@@ -104,7 +104,8 @@ function clear_all_data()
     echo ""
     echo "NO going back!"
     echo ""
-    echo -n "OK to clear *ALL* the Data? press Enter(Y) or Ctrl-c(No) > "
+    echo "OK to clear *ALL* the Data?"
+    echo -n "Press Enter(Y) or Ctrl-c(No) > "
     read INPUT
 
     # telnet
