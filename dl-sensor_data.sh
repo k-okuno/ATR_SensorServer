@@ -133,7 +133,8 @@ usage() {
     echo "Usage: $PROGRAM [-y] [-h] [-c bt/usb] <DEVICE_ID> "
     echo "  --debug. not implemented yet."            
     echo "  -h, --help"
-    echo "  -y, --force-y"    
+    echo "  -y, --force-y"
+    echo "  -i, --interactive-mode"    
     echo "  -c, --connection [bt/usb]"
     echo "  -s, --sleep-time [sec]"
     echo "  -d, --data-entry [1-40]"    
@@ -172,6 +173,11 @@ do
 	    echo "ALL_Y: ${ALL_Y}"
 	    shift 1
 	    ;;
+        '-i'|'--interactive-mode' )
+	    ALL_Y=FALSE
+	    echo "ALL_Y: ${ALL_Y}"
+	    shift 1
+	    ;;	
 	'-s'|'--sleep-time' )
 	    if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
