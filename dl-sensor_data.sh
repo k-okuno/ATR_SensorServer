@@ -61,6 +61,68 @@ source ./func_save_data-log.sh
 source ./func_dl_data.sh
 source ./func_if_num.sh
 
+#############
+# confirmation of clearing all the data by "yes or no"
+#############
+function yes_or_no_clear_data()
+{
+    while true;do
+        echo
+        echo "Type 'yes' or 'no'."
+        read answer
+        case $answer in
+            yes)
+                echo -e "OK, start in a few seconds.\n"
+                return 0
+                ;;
+            no)
+                echo -e "NO.\n"		
+                return 1
+                ;;
+            *)
+                echo -e "you need to type 'yes', otherwise taken as 'no'.\n"
+		return 1
+                ;;
+        esac
+    done
+}
+
+
+#############
+# function to clear all the data
+# NO going back!
+#############
+function clear_all_data()
+{
+    local duration=0.5
+    
+    echo ""
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "!!! WARNNING !!!    !!! WARNNING !!!"
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "Memory will be cleared completly!"
+    echo ""
+    echo "NO going back!"
+    echo ""
+    echo -n "OK to clear *ALL* the Data? press Enter(Y) or Ctrl-c(No) > "
+    read INPUT
+
+    # telnet
+    # timeout -1 ; no timeout
+    expect -c "
+    set timeout -1
+    spawn telnet ${HOST} ${PORT}; sleep 3
+    expect \"\r\"      ; sleep ${duration}
+    send \"clearmem\r\"
+    expect \"\r\"      ; sleep ${duration}
+    send \"getmemfreesize\r\"
+    expect \"\r\"      ; sleep 1
+    send \"\035\r\"
+    expect \"telnet\>\"
+    send \"quit\r\"
+    "
+    return 0
+}
 
 ##########################
 # print usage
@@ -192,5 +254,11 @@ echo -n "OK. Copleted timestamp: " `date +%Y%m%d-%H%M_%S` 2>&1 | tee -a ${LOGNAM
 echo "Saving DL data and log to: ${EXP_DIR}/"
 check_file_dir ${EXP_DIR}
 save_files ${EXP_DIR} ${LOGNAME} ${FILENAME}
+
+#yes_or_no_clear_data
+clear_all_data
+check_func_rtv
+echo ""
+echo "OK, sent command to clear ALL the data."
 
 exit 0
