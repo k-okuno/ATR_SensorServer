@@ -1,13 +1,15 @@
 
-
 MV	= mv -f
 PWD     = `pwd`
 DATE 	= `date '+%Y%m%d-%H%M'`
 EXP_DATE = `date '+%Y%m%d'`
 
-BACKUP_DIR = backups
 
-DEST = backups
+UNISON     = unison 
+UNISON_OPT = -auto
+
+BACKUP_DIR = backups
+DEST = /e
 
 TARGET_FILES =  check_connection.sh default.conf dl-sensor_data.sh \
 		func_cnct_check.sh func_dl_data.sh func_save_data-log.sh \
@@ -29,7 +31,10 @@ backup:
 	if [ ! -d $(DEST) ] ;\
 	then mkdir $(DEST) ;\
 	fi
-	rsync -av ${EXP_DATE}_DEV* ${DEST}
+	rsync -Cav --append ${EXP_DATE}_DEV* ${DEST}
+
+sync:
+	$(UNISON) $(UNISON_OPT) $(PWD) /media/HDD1/$(PWD)
 
 clean:
 	$(RM) ./*~ ./*.stackdump ./*.log ./*.csv
