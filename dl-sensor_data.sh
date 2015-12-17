@@ -16,6 +16,9 @@ ALL_Y=TRUE
 # Default: interactive mode
 #ALL_Y=FALSE
 
+# Default: attempt to clear all memory.
+CLEAR_MEM=TRUE
+
 # sleep time
 DURATION="0.2"
 
@@ -147,11 +150,12 @@ function clear_all_data()
 ##########################
 usage() {
     echo
-    echo "Usage: $PROGRAM [-y] [-i] [-h] [-d which_data ] [-c bt/usb] <DEVICE_ID> "
+    echo "Usage: $PROGRAM [-y] [-i] [-h] [-m clear/keep] [-d which_data ] [-c bt/usb] <DEVICE_ID> "
     echo "  --debug. not implemented yet."            
     echo "  -h, --help"
     echo "  -y, --force-y"
-    echo "  -i, --interactive-mode"    
+    echo "  -i, --interactive-mode"
+    echo "  -m, --clear-mem [clear/keep]"
     echo "  -c, --connection [bt/usb]"
     echo "  -s, --sleep-time [sec]"
     echo "  -d, --data-entry [1-40]"    
@@ -181,6 +185,21 @@ do
 		CNCT="BT"
 	    else
 		echo "ERROR: -c 'bt or usb'."
+		usage
+	    fi
+	    shift 2		
+	    ;;
+        '-m'|'--clear-mem' )
+	    if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "ERROR: $PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+	    fi
+	    if [ ${2} = "clear" ]; then
+		CLEAR_MEM="TRUE"
+	    elif [ ${2} = "keep" ]; then
+		CLEAR_MEM="FALSE"
+	    else
+		echo "ERROR: -m 'celar or keep'."
 		usage
 	    fi
 	    shift 2		
@@ -280,7 +299,12 @@ check_file_dir ${EXP_DIR}
 save_files ${EXP_DIR} ${LOGNAME} ${FILENAME}
 
 #yes_or_no_clear_data
-clear_all_data ${HOST} ${PORT}
-check_func_rtv
+if [ ${CLEAR_MEM} = "TRUE" ]; then
+    clear_all_data ${HOST} ${PORT}
+    check_func_rtv
+else
+    # never here....
+    echo "Memory/Data kept on the device."
+fi
 
 exit 0
