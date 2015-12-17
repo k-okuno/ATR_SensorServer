@@ -64,32 +64,6 @@ source ./func_save_data-log.sh
 source ./func_dl_data.sh
 source ./func_if_num.sh
 
-#############
-# confirmation of clearing all the data by "yes or no"
-#############
-function yes_or_no_clear_data()
-{
-    while true;do
-        echo
-        echo "Type 'yes' or 'no'."
-        read answer
-        case $answer in
-            yes)
-                echo -e "OK, start in a few seconds.\n"
-                return 0
-                ;;
-            no)
-                echo -e "NO.\n"		
-                return 1
-                ;;
-            *)
-                echo -e "you need to type 'yes', otherwise taken as 'no'.\n"
-		return 1
-                ;;
-        esac
-    done
-}
-
 
 #############
 # function to clear all the data
