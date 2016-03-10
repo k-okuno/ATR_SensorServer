@@ -17,7 +17,8 @@ ALL_Y=TRUE
 #ALL_Y=FALSE
 
 # Default: attempt to clear all memory.
-CLEAR_MEM=TRUE
+#CLEAR_MEM=TRUE
+CLEAR_MEM=FALSE
 
 # sleep time
 DURATION="0.2"
